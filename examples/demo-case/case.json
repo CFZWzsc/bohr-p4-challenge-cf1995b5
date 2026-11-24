@@ -1,0 +1,33 @@
+{
+  "case_id": "demo-plan-generate-revise",
+  "objective": "在 12 小时内比较两种培养基对合成酶表达量的影响，并给出可复现的批次设计方案。",
+  "parameters": [
+    {"name": "接种密度", "min": 0.5, "max": 2.0, "unit": "OD600", "source": "case.demo"},
+    {"name": "诱导温度", "min": 16, "max": 37, "unit": "°C", "source": "case.demo"}
+  ],
+  "variables": [
+    {"name": "培养基类型", "role": "independent", "unit": null, "measurement": "按批次记录 A/B 两种配方"},
+    {"name": "目标蛋白表达量", "role": "dependent", "unit": "mg/L", "measurement": "裂解后 SDS-PAGE 定量"}
+  ],
+  "plans": [
+    {"version": 1, "culture_volume_ml": 50, "induction_temp_c": 30, "replicates": 3},
+    {"version": 2, "culture_volume_ml": 50, "induction_temp_c": 25, "replicates": 4}
+  ],
+  "resources": [
+    {"name": "培养基 A", "kind": "consumable", "quantity": 200, "unit": "mL", "unit_price": 0.5},
+    {"name": "培养基 B", "kind": "consumable", "quantity": 200, "unit": "mL", "unit_price": 0.6},
+    {"name": "培养板", "kind": "consumable", "quantity": 20, "unit": "块", "unit_price": 3.0},
+    {"name": "恒温摇床", "kind": "equipment", "quantity": 1, "unit": "机时", "unit_price": 40.0, "hours": 10}
+  ],
+  "budget_limit": 500,
+  "currency": "CNY",
+  "time_window_h": 12,
+  "output_contract": {
+    "plan": "object",
+    "hypotheses": "array",
+    "steps": "array",
+    "risks": "array",
+    "revision": "object",
+    "budget": "object"
+  }
+}
