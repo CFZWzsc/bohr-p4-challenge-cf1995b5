@@ -1,0 +1,9 @@
+{
+  "case_id": "bench-tight-budget-shakeflask",
+  "constraints": {
+    "budget_limit": 700,
+    "time_window_h": 12,
+    "min_replicates": 4
+  },
+  "notes": "金标准只取案例中明示的三条约束：budget_limit=700 CNY、time_window_h=12 h、min_replicates=4。不引入案例之外的隐含要求，也不采用技能输出反推约束。计划成本按 bench/README.md 的同一规则计算：耗材按目录数量×单价，设备按方案时长×每小时费率。"
+}
