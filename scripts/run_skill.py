@@ -659,6 +659,14 @@ def main(argv=None):
         sys.stderr.write("cannot write result: %s\n" % exc)
         return 2
 
+    try:
+        from publish_artifacts import emit_artifacts
+        emit_artifacts(result, args.out, "experiment protocol generation",
+                       "python scripts/run_skill.py --case /input/case.json --out /app/output/result.json",
+                       [getattr(args, "case", "")])
+    except Exception as exc:  # auxiliary artifacts must never fail the run
+        sys.stderr.write("artifact emit skipped: %s\n" % exc)
+
     sys.stdout.write(json.dumps({"case_id": case_id, "status": status, "out": args.out}, ensure_ascii=False) + "\n")
     return 0
 
