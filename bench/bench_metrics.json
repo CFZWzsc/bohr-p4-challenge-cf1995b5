@@ -1,0 +1,203 @@
+{
+  "cases": [
+    {
+      "baseline": {
+        "constraint_checks": {
+          "budget": false,
+          "controls_and_risks": false,
+          "min_replicates": false,
+          "time_window": false
+        },
+        "constraints_satisfied": 0,
+        "constraints_unmet": 4,
+        "controls": 0,
+        "cost": 1320.0,
+        "cost_breakdown": {
+          "consumable": 280.0,
+          "equipment": 1040.0,
+          "rule": "consumables = sum(quantity*unit_price); equipment = duration_h*unit_price",
+          "total": 1320.0
+        },
+        "culture_volume_ml": 50.0,
+        "deliverables": {
+          "budget": false,
+          "plan": true,
+          "risks": false,
+          "single_run_complete": false,
+          "steps": false
+        },
+        "duration_h": 26.0,
+        "plan": {
+          "arms": 2,
+          "culture_volume_ml": 50,
+          "duration_h": 26,
+          "label": "naive_fixed_plan_v1",
+          "replicates": 3,
+          "version": 1
+        },
+        "replicates": 3.0,
+        "risks": 0,
+        "status": "not_applicable"
+      },
+      "case_file": "bench/cases/tight-budget-shakeflask.json",
+      "case_id": "bench-tight-budget-shakeflask",
+      "gain": {
+        "constraints_satisfied_delta": 4,
+        "constraints_unmet_delta": -4,
+        "cost_delta": 640.0,
+        "hours_delta": 16.0,
+        "skill_strictly_better": true
+      },
+      "gold": {
+        "budget_limit": 700,
+        "min_replicates": 4,
+        "time_window_h": 12
+      },
+      "gold_file": "bench/gold/tight-budget-shakeflask.json",
+      "skill": {
+        "constraint_checks": {
+          "budget": true,
+          "controls_and_risks": true,
+          "min_replicates": true,
+          "time_window": true
+        },
+        "constraints_satisfied": 4,
+        "constraints_unmet": 0,
+        "controls": 3,
+        "cost": 680.0,
+        "cost_breakdown": {
+          "consumable": 280.0,
+          "equipment": 400.0,
+          "rule": "consumables = sum(quantity*unit_price); equipment = duration_h*unit_price",
+          "total": 680.0
+        },
+        "culture_volume_ml": 50.0,
+        "deliverables": {
+          "budget": true,
+          "plan": true,
+          "risks": true,
+          "single_run_complete": true,
+          "steps": true
+        },
+        "duration_h": 10.0,
+        "plan": {
+          "arms": 2,
+          "constraint_echoed_in_steps": true,
+          "culture_volume_ml": 50.0,
+          "duration_h": 10.0,
+          "label": "skill_selected_plan_v2",
+          "replicates": 4.0,
+          "version": 2
+        },
+        "replicates": 4.0,
+        "risks": 5,
+        "status": "success"
+      }
+    },
+    {
+      "baseline": {
+        "constraint_checks": {
+          "budget": false,
+          "controls_and_risks": false,
+          "min_replicates": false,
+          "time_window": false
+        },
+        "constraints_satisfied": 0,
+        "constraints_unmet": 4,
+        "controls": 0,
+        "cost": 1072.0,
+        "cost_breakdown": {
+          "consumable": 172.0,
+          "equipment": 900.0,
+          "rule": "consumables = sum(quantity*unit_price); equipment = duration_h*unit_price",
+          "total": 1072.0
+        },
+        "culture_volume_ml": 50.0,
+        "deliverables": {
+          "budget": false,
+          "plan": true,
+          "risks": false,
+          "single_run_complete": false,
+          "steps": false
+        },
+        "duration_h": 30.0,
+        "plan": {
+          "arms": 2,
+          "culture_volume_ml": 50,
+          "duration_h": 30,
+          "label": "naive_fixed_plan_v1",
+          "replicates": 3,
+          "version": 1
+        },
+        "replicates": 3.0,
+        "risks": 0,
+        "status": "not_applicable"
+      },
+      "case_file": "bench/cases/tight-window-buffer.json",
+      "case_id": "bench-tight-window-buffer",
+      "gain": {
+        "constraints_satisfied_delta": 4,
+        "constraints_unmet_delta": -4,
+        "cost_delta": 660.0,
+        "hours_delta": 22.0,
+        "skill_strictly_better": true
+      },
+      "gold": {
+        "budget_limit": 430,
+        "min_replicates": 4,
+        "time_window_h": 10
+      },
+      "gold_file": "bench/gold/tight-window-buffer.json",
+      "skill": {
+        "constraint_checks": {
+          "budget": true,
+          "controls_and_risks": true,
+          "min_replicates": true,
+          "time_window": true
+        },
+        "constraints_satisfied": 4,
+        "constraints_unmet": 0,
+        "controls": 3,
+        "cost": 412.0,
+        "cost_breakdown": {
+          "consumable": 172.0,
+          "equipment": 240.0,
+          "rule": "consumables = sum(quantity*unit_price); equipment = duration_h*unit_price",
+          "total": 412.0
+        },
+        "culture_volume_ml": 30.0,
+        "deliverables": {
+          "budget": true,
+          "plan": true,
+          "risks": true,
+          "single_run_complete": true,
+          "steps": true
+        },
+        "duration_h": 8.0,
+        "plan": {
+          "arms": 2,
+          "constraint_echoed_in_steps": true,
+          "culture_volume_ml": 30.0,
+          "duration_h": 8.0,
+          "label": "skill_selected_plan_v2",
+          "replicates": 4.0,
+          "version": 2
+        },
+        "replicates": 4.0,
+        "risks": 5,
+        "status": "success"
+      }
+    }
+  ],
+  "protocol_version": "plan-bench-v1",
+  "summary": {
+    "baseline_constraints_satisfied": 0,
+    "baseline_constraints_unmet": 8,
+    "baseline_total_cost": 2392.0,
+    "cases": 2,
+    "skill_constraints_satisfied": 8,
+    "skill_constraints_unmet": 0,
+    "skill_strictly_better_on_all_cases": true,
+    "skill_total_cost": 1092.0
+  }
+}
