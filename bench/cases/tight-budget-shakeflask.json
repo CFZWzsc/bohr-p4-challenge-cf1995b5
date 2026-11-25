@@ -1,0 +1,35 @@
+{
+  "case_id": "bench-tight-budget-shakeflask",
+  "objective": "在 12 小时窗口内比较培养基 A 与培养基 B 对合成酶表达量的影响，并在不超预算的前提下给出至少 4 次生物学重复的可执行方案。",
+  "parameters": [
+    {"name": "接种密度", "min": 0.5, "max": 2.0, "unit": "OD600", "source": "case.bench"},
+    {"name": "诱导温度", "min": 16, "max": 37, "unit": "°C", "source": "case.bench"},
+    {"name": "诱导时长", "min": 4, "max": 12, "unit": "h", "source": "case.bench"}
+  ],
+  "variables": [
+    {"name": "培养基类型", "role": "independent", "unit": null, "measurement": "按批次记录 A/B 两种配方", "values": ["A", "B"]},
+    {"name": "目标蛋白表达量", "role": "dependent", "unit": "mg/L", "measurement": "裂解后 SDS-PAGE 定量"}
+  ],
+  "plans": [
+    {"version": 1, "culture_volume_ml": 50, "replicates": 3, "arms": 2, "duration_h": 26, "induction_temp_c": 30},
+    {"version": 2, "culture_volume_ml": 50, "replicates": 4, "arms": 2, "duration_h": 10, "induction_temp_c": 25}
+  ],
+  "resources": [
+    {"name": "培养基 A", "kind": "consumable", "quantity": 200, "unit": "mL", "unit_price": 0.5},
+    {"name": "培养基 B", "kind": "consumable", "quantity": 200, "unit": "mL", "unit_price": 0.6},
+    {"name": "培养板", "kind": "consumable", "quantity": 20, "unit": "块", "unit_price": 3.0},
+    {"name": "恒温摇床", "kind": "equipment", "quantity": 1, "unit": "机时", "unit_price": 40.0, "hours": 10}
+  ],
+  "budget_limit": 700,
+  "currency": "CNY",
+  "time_window_h": 12,
+  "min_replicates": 4,
+  "output_contract": {
+    "plan": "object",
+    "hypotheses": "array",
+    "steps": "array",
+    "risks": "array",
+    "budget": "object"
+  },
+  "notes": "纯合成案例。资源目录按 1 台摇床 10 机时报价；版本 1 是未核算预算与排期的默认方案（50 mL、3 重复、26 小时），版本 2 是紧缩到 10 小时、4 重复的修订方案。"
+}
