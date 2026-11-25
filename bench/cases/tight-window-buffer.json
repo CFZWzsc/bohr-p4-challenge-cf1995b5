@@ -1,0 +1,33 @@
+{
+  "case_id": "bench-tight-window-buffer",
+  "objective": "在 10 小时窗口内比较两个 pH 水平对酶活性的影响，预算不超过 430 元，且每个条件至少 4 次重复。",
+  "parameters": [
+    {"name": "缓冲液 pH", "min": 5.5, "max": 7.5, "unit": "pH", "source": "case.bench"},
+    {"name": "反应温度", "min": 20, "max": 40, "unit": "°C", "source": "case.bench"}
+  ],
+  "variables": [
+    {"name": "pH 水平", "role": "independent", "unit": "pH", "measurement": "按批次记录投加酸碱体积并复核 pH 计读数"},
+    {"name": "酶活性", "role": "dependent", "unit": "U/mL", "measurement": "底物显色动力学初速度"}
+  ],
+  "plans": [
+    {"version": 1, "culture_volume_ml": 50, "replicates": 3, "arms": 2, "duration_h": 30, "ph": 6.0},
+    {"version": 2, "culture_volume_ml": 30, "replicates": 4, "arms": 2, "duration_h": 8, "ph": 6.8}
+  ],
+  "resources": [
+    {"name": "磷酸缓冲液", "kind": "consumable", "quantity": 400, "unit": "mL", "unit_price": 0.25},
+    {"name": "反应板", "kind": "consumable", "quantity": 16, "unit": "块", "unit_price": 4.5},
+    {"name": "恒温培养箱", "kind": "equipment", "quantity": 1, "unit": "机时", "unit_price": 30.0, "hours": 8}
+  ],
+  "budget_limit": 430,
+  "currency": "CNY",
+  "time_window_h": 10,
+  "min_replicates": 4,
+  "output_contract": {
+    "plan": "object",
+    "hypotheses": "array",
+    "steps": "array",
+    "risks": "array",
+    "budget": "object"
+  },
+  "notes": "纯合成案例。版本 1 是未核算预算与排期的默认方案（50 mL、3 重复、30 小时），版本 2 压缩到 8 小时、4 重复。资源目录按 1 台培养箱 8 机时报价。"
+}
