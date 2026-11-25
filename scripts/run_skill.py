@@ -181,6 +181,21 @@ def normalize_params(case):
     return path, params
 
 
+def param_definition(param):
+    parts = []
+    if param.get("min") is not None:
+        parts.append("min %s" % param["min"])
+    if param.get("max") is not None:
+        parts.append("max %s" % param["max"])
+    if param.get("values"):
+        parts.append("levels %s" % ", ".join(str(value) for value in param["values"]))
+    unit = param.get("unit") or ""
+    if parts:
+        return ("set within the stated domain (%s)%s; record the achieved level per run"
+                % (", ".join(parts), (" " + unit) if unit else ""))
+    return "set to a logged level; no domain was provided for this parameter"
+
+
 def normalize_variables(case, params):
     path, items = find_any_list(case, VAR_KEYS)
     variables = []
@@ -212,7 +227,7 @@ def normalize_variables(case, params):
             variables.append({
                 "name": param["name"],
                 "role": "independent",
-                "operational_definition": "set to the level prescribed by the plan",
+                "operational_definition": param_definition(param),
                 "measurement": "recorded from the run log",
                 "unit": param["unit"],
                 "range": {"min": param["min"], "max": param["max"], "values": param["values"]},
@@ -345,19 +360,39 @@ def build_controls(variables):
     ]
 
 
-def build_steps(goal, params, resources):
+def build_steps(goal, params, resources, plans=()):
     names = [p["name"] for p in params][:4]
-    equipment = [r["name"] for r in resources if r.get("kind", "").lower() in ("equipment", "instrument", "device")][:4]
+    equipment_rows = [r for r in resources
+                      if str(r.get("kind", "")).lower() in ("equipment", "instrument", "device")]
+    equipment = [r["name"] for r in equipment_rows][:4]
+    timed = [(r["name"], r["hours"]) for r in equipment_rows if r.get("hours") is not None]
+    plan_version = None
+    plan_constraints = []
+    if plans:
+        entry = plans[-1]
+        plan_version = entry["version"]
+        content = entry.get("content") if isinstance(entry.get("content"), dict) else {}
+        for key in ("culture_volume_ml", "induction_temp_c", "replicates", "temperature_c",
+                    "ph", "duration_h"):
+            if key in content:
+                plan_constraints.append("%s=%s" % (key, content[key]))
     base = [
-        ("S1", "Sample and material preparation", "label, aliquot and equilibrate samples; record lot, mass/volume and storage condition", 1.5),
-        ("S2", "Randomisation and blocking", "assign samples to control and treatment arms with a fixed, logged randomisation key; block by batch", 0.5),
-        ("S3", "Control and treatment execution", "run blank, positive and gradient controls alongside treatment arms", 2.0),
-        ("S4", "Instrument set-up and calibration", "verify range, calibration standard and blank before the first run", 1.0),
-        ("S5", "Measurement", "acquire the primary readout with the parameters fixed below; record raw files and run log", 3.0),
-        ("S6", "Readout, QC and analysis", "apply pre-registered acceptance rules; retain raw data and exclusion log", 2.0),
+        ("S1", "Sample and material preparation", "label, aliquot and equilibrate samples; record lot, mass/volume and storage condition"),
+        ("S2", "Randomisation and blocking", "assign samples to control and treatment arms with a fixed, logged randomisation key; block by batch"),
+        ("S3", "Control and treatment execution", "run blank, positive and gradient controls alongside treatment arms"),
+        ("S4", "Instrument set-up and calibration", "verify range, calibration standard and blank before the first run"),
+        ("S5", "Measurement", "acquire the primary readout with the parameters fixed below; record raw files and run log"),
+        ("S6", "Readout, QC and analysis", "apply pre-registered acceptance rules; retain raw data and exclusion log"),
     ]
     steps = []
-    for sid, name, action, hours in base:
+    for sid, name, action in base:
+        hours = None
+        hours_source = "not_provided"
+        if sid == "S5" and timed:
+            hours = timed[0][1]
+            hours_source = "resources[%s].hours" % timed[0][0]
+        if sid in ("S3", "S5") and plan_constraints:
+            action += "; hold the case plan constraints: " + ", ".join(plan_constraints)
         step = {
             "id": sid,
             "name": name,
@@ -365,9 +400,12 @@ def build_steps(goal, params, resources):
             "equipment": equipment or ["not_provided"],
             "parameters": names if sid in ("S3", "S5") else [],
             "duration_h": hours,
+            "duration_source": hours_source,
             "depends_on": [] if sid == "S1" else ["S%d" % (int(sid[1:]) - 1)],
             "output": "logged artefact for " + name.lower(),
         }
+        if plan_version is not None and sid in ("S3", "S5"):
+            step["plan_version"] = plan_version
         steps.append(step)
     return steps
 
@@ -474,14 +512,15 @@ def main(argv=None):
     else:
         hypotheses = []
 
-    steps = build_steps(goal, params, resources) if case else []
+    steps = build_steps(goal, params, resources, plans) if case else []
     risks = build_risks(params) if case else []
     controls = build_controls(variables) if case else []
     readout = build_readout(variables) if case else {"primary": None, "acceptance_rule": "not_provided"}
     confirmations = build_confirmations(resources) if case else []
     checklist = build_checklist(params, limit) if case else []
 
-    total_hours = round(sum(s["duration_h"] for s in steps), 2) if steps else None
+    known_hours = [s["duration_h"] for s in steps if isinstance(s.get("duration_h"), (int, float))]
+    total_hours = round(sum(known_hours), 2) if known_hours else None
     window = None
     _, window_value = find_first(case, ("time_window_h", "time_window", "deadline_h")) if case else (None, None)
     window = num(window_value)
